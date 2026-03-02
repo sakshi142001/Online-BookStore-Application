@@ -1,0 +1,30 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: bookstore-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bookstore
+      MYSQL_USER: bookstore
+      MYSQL_PASSWORD: root
+    ports:
+      - "3307:3306"   # use 3307 on host if 3306 is busy
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    image: sakshi052001/online-bookstore:1.0
+    container_name: online-bookstore
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bookstore
+      SPRING_DATASOURCE_USERNAME: bookstore
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:
